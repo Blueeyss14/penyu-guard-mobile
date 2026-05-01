@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penyu_guard/src/controller/sensor_controller.dart';
 import 'package:penyu_guard/src/res/custom_color.dart';
+import 'package:penyu_guard/src/views/history_view.dart';
 
 _TurbidityInfo _turbidityInfo(double ntu) {
   if (ntu <= 25) {
@@ -141,18 +142,43 @@ class SensorView extends StatelessWidget {
                     const SizedBox(height: 16),
                     _ErrorBanner(message: ctrl.errorMessage.value),
                   ],
-                  if (ctrl.lastUpdated.value.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Center(
-                      child: Text(
-                        'Update terakhir: ${ctrl.lastUpdated.value}',
-                        style: const TextStyle(
-                          color: CustomColors.grey,
-                          fontSize: 12,
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.to(() => const HistoryView());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: CustomColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        'Lihat History Mingguan',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                  ],
+                  ),
+                  // if (ctrl.lastUpdated.value.isNotEmpty) ...[
+                  //   const SizedBox(height: 16),
+                  //   Center(
+                  //     child: Text(
+                  //       'Update terakhir: ${ctrl.lastUpdated.value}',
+                  //       style: const TextStyle(
+                  //         color: CustomColors.grey,
+                  //         fontSize: 12,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ],
                 ],
               ),
             ),

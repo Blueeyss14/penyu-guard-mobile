@@ -3,8 +3,9 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:penyu_guard/src/services/api_key.dart';
+
 class SensorController extends GetxController {
-  static const String _esp32Url = 'http://192.168.4.1/data';
   static const int _intervalSeconds = 2;
 
   final turbidity = 0.0.obs;
@@ -33,21 +34,25 @@ class SensorController extends GetxController {
 
     try {
       final response = await http
-          .get(Uri.parse(_esp32Url))
+          .get(Uri.parse(ApiKey.realtimeUrl))
           .timeout(const Duration(seconds: 3));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        turbidity.value = (data['turbidity'] as num).toDouble();
-        ph.value = (data['ph'] as num).toDouble();
-        status.value = data['status'] ?? '';
-        isConnected.value = true;
-
-        final now = DateTime.now();
-        lastUpdated.value =
-            '${now.hour.toString().padLeft(2, '0')}:'
-            '${now.minute.toString().padLeft(2, '0')}:'
-            '${now.second.toString().padLeft(2, '0')}';
+        if (data.isNotEmpty) {
+          turbidity.value = (data['turbidity'] as num).toDouble();
+          ph.value = (data['ph'] as num).toDouble();
+          isConnected.value = true;
+          
+          final now = DateTime.now();
+          lastUpdated.value =
+              '${now.hour.toString().padLeft(2, '0')}:'
+              '${now.minute.toString().padLeft(2, '0')}:'
+              '${now.second.toString().padLeft(2, '0')}';
+        } else {
+          isConnected.value = false;
+          errorMessage.value = 'Belum ada data';
+        }
       } else {
         throw Exception('HTTP ${response.statusCode}');
       }
